@@ -52,19 +52,15 @@ namespace IRCBridge
             irc.SupportNonRfc = true;
             irc.ActiveChannelSyncing = true;
             irc.OnChannelMessage += IRCOnOnChannelMessage;
-            //irc.OnRawMessage += (sender, args) => Log.Debug(args.Data.RawMessage);
+#if DEBUG
+            irc.OnRawMessage += (sender, args) => Log.Debug(args.Data.RawMessage);
+#endif
             PlayerConnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has connected to the game.");
             PlayerConnecting +=
                 entity => SendMessage(entity.GetField<string>("name") + " is connecting to the game.");
             PlayerDisconnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has disconnected from the game.");
-            Tick += () =>
-                        {
-                            //Log.Debug("Ticked. " + DateTime.UtcNow.ToString());
-                            /*if (irc.IsConnected)
-                                irc.ListenOnce(false);*/
-                        };
             OnNotify("exitLevel_called", OnExitLevel);
             OnNotify("game_ended", OnExitLevel);
             Log.Info("Connecting to " + server + ":" + port + "/" + channel);
