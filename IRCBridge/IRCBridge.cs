@@ -55,6 +55,11 @@ namespace IRCBridge
 #if DEBUG
             irc.OnRawMessage += (sender, args) => Log.Debug(args.Data.RawMessage);
 #endif
+            Tick += () =>
+                        {
+                            if (irc.IsConnected)
+                                irc.ListenOnce(false);
+                        };
             PlayerConnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has connected to the game.");
             PlayerConnecting +=
