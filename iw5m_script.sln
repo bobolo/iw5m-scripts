@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRCBridge", "IRCBridge\IRCBridge.csproj", "{B582B123-00E7-41D6-A3CF-902BC336EB55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfinityScript", "src\InfinityScript\InfinityScript.csproj", "{5EDFA999-EB9D-4966-B10C-56D405AF421E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B582B123-00E7-41D6-A3CF-902BC336EB55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B582B123-00E7-41D6-A3CF-902BC336EB55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B582B123-00E7-41D6-A3CF-902BC336EB55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B582B123-00E7-41D6-A3CF-902BC336EB55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
