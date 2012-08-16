@@ -42,6 +42,7 @@ namespace RollTheDice
             player.SetPerk("specialty_fastreload", false, true);
             player.SetPerk("specialty_falldamage", false, true);
             player.Call("setKillstreaks", "none", "none", "none");
+            DoRandom(player, null);
         }
 
         public void DoRandom(Entity player, int? desiredNumber)
@@ -54,18 +55,17 @@ namespace RollTheDice
             {
                 case 0:
                     rollname = "^2Extra Speed";
-                    Speed(player, 1.5);
+                    new Thread(() => Speed(player, 1.5)).Start();
                     break;
                 case 1:
                     rollname = "XM25 Akimbo";
                     Stock(player, 99);
-                    Weapon("iw5_xm25", "akimbo");
+                    new Thread(() => Weapon(player, "xm25", "akimbo", null)).Start();
                     break;
                 case 2:
                     rollname = "^2No Recoil";
                     player.Call("recoilscaleon", 0);
                     break;
-
             }
         }
 
