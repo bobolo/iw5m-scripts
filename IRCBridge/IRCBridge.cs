@@ -19,6 +19,7 @@ namespace IRCBridge
         public string password;
         public bool sendstartmsg;
         public bool destroy;
+        public bool sendingscores;
         public Thread thread;
         public const string BOLD = "";
         public const string NORMAL = "";
@@ -102,6 +103,10 @@ namespace IRCBridge
         {
             if (destroy)
                 return;
+            Thread.Sleep(1000);
+            var start = DateTime.Now;
+            while (sendingscores && (DateTime.Now - start).TotalSeconds < 3)
+                Thread.Sleep(10);
             destroy = true;
             if (irc.IsConnected)
             {
@@ -154,16 +159,19 @@ namespace IRCBridge
         public override void OnExitLevel()
         {
             //Log.Debug("Sending match stats...");
+            sendingscores = true;
             SendMessage("Match ended, level is exiting...");
             SendMessage("Scoreboard: ");
             //Log.Debug("Constructing match stats...");
             BuildScores();
+            sendingscores = false;
             Destroy();
         }
 
         public void OnExitLevel2(Parameter para)
         {
-            //Log.Debug("Sending match stats...");
+            sendingscores = true;
+            Log.Debug("Sending match stats...");
             var winner = "";
             switch (para.Type)
             {
@@ -179,6 +187,9 @@ namespace IRCBridge
             SendMessage("Scoreboard (Winner is " + winner + "): ");
             //Log.Debug("Constructing match stats...");
             BuildScores();
+            irc.ListenOnce(false);
+            Thread.Sleep(500);
+            sendingscores = false;
             Destroy();
         }
 
@@ -209,7 +220,11 @@ namespace IRCBridge
         {
             if (irc != null)
                 if (irc.IsConnected)
+                {
                     irc.SendMessage(SendType.Message, channel, ReplaceQuakeColorCodes(message));
+                    irc.ListenOnce(false);
+                    irc.ListenOnce(false);
+                }
         }
 
         public void Connect()
