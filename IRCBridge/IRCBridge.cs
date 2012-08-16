@@ -16,7 +16,7 @@ namespace IRCBridge
         public string channel;
         public string nick;
         public string password;
-        public bool init;
+        public bool sendstartmsg;
         public Thread thread;
         public const string BOLD = "";
         public const string NORMAL = "";
@@ -65,13 +65,18 @@ namespace IRCBridge
 #endif
             Tick += () =>
                         {
-                            if (irc.IsConnected)
+                            /*if (irc.IsConnected)
                                 irc.ListenOnce(false);
                             /*if (!init)
                             {
                                 Connect();
                                 init = true;
                             }*/
+                            if (sendstartmsg)
+                            {
+                                sendstartmsg = false;
+                                OnStartGameType();
+                            }
                         };
             PlayerConnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has connected to the game.");
@@ -169,6 +174,20 @@ namespace IRCBridge
                 Log.Info("Attempting to connect...");
                 irc.Connect(server, port);
                 irc.ListenOnce(false);
+                Log.Info("Logging in.");
+                irc.Login(nick, "IW5M IRCBridge Bot");
+                irc.ListenOnce(false);
+                Log.Info("Joining channel.");
+                irc.RfcJoin(channel);
+                irc.ListenOnce(false);
+                Log.Info("Identifying.");
+                irc.RfcPrivmsg("NickServ", "identify " + password);
+                irc.ListenOnce(false);
+                //Log.Info("Sending match info.");
+                //OnStartGameType();
+                sendstartmsg = true;
+                Log.Info("Listening.");
+                irc.Listen();
             }
             catch (Exception e)
             {
@@ -176,17 +195,6 @@ namespace IRCBridge
                 Log.Error(e.ToString());
                 return;
             }
-            Log.Info("Logging in.");
-            irc.Login(nick, "IW5M IRCBridge Bot");
-            irc.ListenOnce(false);
-            Log.Info("Joining channel.");
-            irc.RfcJoin(channel);
-            irc.ListenOnce(false);
-            Log.Info("Identifying.");
-            irc.RfcPrivmsg("NickServ", "identify " + password);
-            irc.ListenOnce(false);
-            OnStartGameType();
-            irc.Listen(false);
         }
 
         public static string ReplaceQuakeColorCodes(string remove)
