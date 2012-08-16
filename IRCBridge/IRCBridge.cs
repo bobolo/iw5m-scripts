@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace IRCBridge
         public string nick;
         public string password;
         public bool sendstartmsg;
+        public bool destroy;
         public Thread thread;
         public const string BOLD = "";
         public const string NORMAL = "";
@@ -55,7 +57,7 @@ namespace IRCBridge
             }
             irc.Encoding = Encoding.ASCII;
             irc.SendDelay = 300;
-            irc.AutoReconnect = true;
+            //irc.AutoReconnect = true;
             irc.AutoRejoinOnKick = true;
             irc.SupportNonRfc = true;
             irc.ActiveChannelSyncing = true;
@@ -93,11 +95,33 @@ namespace IRCBridge
 
         ~IRCBridge()
         {
-            SendMessage("Plugin getting destroyed...");
-            thread.Abort();
-            irc.Disconnect();
+            Destroy();
+        }
+
+        private void Destroy()
+        {
+            if (destroy)
+                return;
+            destroy = true;
+            if (irc.IsConnected)
+            {
+                Debug.WriteLine("Disconnecting from IRC.");
+                irc.Disconnect();
+                Debug.WriteLine("Disconnected");
+            }
+            //Log.Debug("Plugin getting destroyed...");
+            Debug.WriteLine("Plugin getting destroyed...");
+            //SendMessage("Plugin getting destroyed...");
+            Debug.WriteLine("Nulling IRC client...");
+            //Log.Debug("Nulling IRC client...");
             irc = null;
+            Debug.WriteLine("Deleting lock file...");
+            //Log.Debug("Deleting irc.lock file");
             File.Delete("irc.lock");
+            Debug.WriteLine("Calling GC collect");
+            GC.Collect();
+            Debug.WriteLine("Destroy done.");
+           // Log.Debug("Destroy done.");
         }
 
         private void IRCOnOnChannelMessage(object sender, IrcEventArgs ircEventArgs)
@@ -129,13 +153,12 @@ namespace IRCBridge
 
         public override void OnExitLevel()
         {
+            //Log.Debug("Sending match stats...");
             SendMessage("Match ended, level is exiting...");
             SendMessage("Scoreboard: ");
+            //Log.Debug("Constructing match stats...");
             BuildScores();
-            irc.Disconnect();
-            thread.Abort();
-            irc = null;
-            File.Delete("irc.lock");
+            Destroy();
         }
 
         public override void OnStartGameType()
@@ -188,11 +211,22 @@ namespace IRCBridge
                 sendstartmsg = true;
                 Log.Info("Listening.");
                 irc.Listen();
+                //irc.Disconnect();
+            }
+            catch (ThreadAbortException e)
+            {
+                Log.Debug("ABORT ABORT ABORT");
+                if (irc.IsConnected)
+                    irc.Disconnect();
+                Log.Debug("Destroying...");
+                Destroy();
+                return;
             }
             catch (Exception e)
             {
                 //throw;
                 Log.Error(e.ToString());
+                Destroy();
                 return;
             }
         }

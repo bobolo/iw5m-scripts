@@ -592,8 +592,8 @@ namespace Meebey.SmartIrc4net
             
             IsDisconnecting = true;
             
-            _ReadThread.Stop();
-            _WriteThread.Stop();
+            //_ReadThread.Stop();
+            //_WriteThread.Stop();
             _TcpClient.Close();
             _IsConnected = false;
             _IsRegistered = false;
