@@ -87,7 +87,7 @@ namespace IRCBridge
             PlayerDisconnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has disconnected from the game.");
             OnNotify("exitLevel_called", OnExitLevel);
-            OnNotify("game_ended", new Action<Parameter>(OnExitLevel2));
+            OnNotify("game_ended", OnExitLevel2);
             Log.Info("Connecting to " + server + ":" + port + "/" + channel);
             thread = new Thread(Connect);
             thread.Start();
@@ -137,17 +137,17 @@ namespace IRCBridge
 
         private void BuildScores()
         {
-            SendMessage("Player - Score - Kills - Assists - Death");
+            SendMessage("Player       Score    Kills Assists Deaths");
             var scoreList = (from p in Players
                              orderby p.GetField<int>("score") descending, p.GetField<int>("deaths") ascending
                              select p).ToArray();
             for (int i = 0; i < scoreList.Length; i++)
             {
-                SendMessage(string.Format("{0} - {1} - {2} - {3} - {4}", scoreList[i].GetField<string>("name"),
-                                          scoreList[i].GetField<string>("score"),
-                                          scoreList[i].GetField<string>("kills"),
-                                          scoreList[i].GetField<string>("assists"),
-                                          scoreList[i].GetField<string>("deaths")));
+                SendMessage(string.Format("{0} {1} {2} {3} {4}", scoreList[i].GetField<string>("name").PadRight(12),
+                                          scoreList[i].GetField<string>("score").PadRight(8),
+                                          scoreList[i].GetField<string>("kills").PadRight(5),
+                                          scoreList[i].GetField<string>("assists").PadRight(7),
+                                          scoreList[i].GetField<string>("deaths").PadRight(6)));
             }
         }
 
