@@ -87,7 +87,7 @@ namespace IRCBridge
             PlayerDisconnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has disconnected from the game.");
             OnNotify("exitLevel_called", OnExitLevel);
-            OnNotify("game_ended", OnExitLevel);
+            OnNotify("game_ended", new Action<Parameter>(OnExitLevel2));
             Log.Info("Connecting to " + server + ":" + port + "/" + channel);
             thread = new Thread(Connect);
             thread.Start();
@@ -156,6 +156,18 @@ namespace IRCBridge
             //Log.Debug("Sending match stats...");
             SendMessage("Match ended, level is exiting...");
             SendMessage("Scoreboard: ");
+            //Log.Debug("Constructing match stats...");
+            BuildScores();
+            Destroy();
+        }
+
+        public void OnExitLevel2(Parameter para)
+        {
+            //Log.Debug("Sending match stats...");
+            var winner = "";
+            winner = para.As<Entity>().IsPlayer ? para.As<Entity>().GetField<string>("name") : para.As<string>();
+            SendMessage("Match ended, level is exiting...");
+            SendMessage("Scoreboard (Winner is " + winner + "): ");
             //Log.Debug("Constructing match stats...");
             BuildScores();
             Destroy();
