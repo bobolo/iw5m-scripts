@@ -6,4 +6,6 @@ obj
 TestResults
 # Resharper files
 _Resharper*
-/*.suo
+#user files
+*.suo
+*.user
