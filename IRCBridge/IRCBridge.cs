@@ -16,6 +16,8 @@ namespace IRCBridge
         public string channel;
         public string nick;
         public string password;
+        public bool init;
+        public Thread thread;
         public const string BOLD = "";
         public const string NORMAL = "";
         public const string UNDERLINE = "";
@@ -23,6 +25,12 @@ namespace IRCBridge
 
         public IRCBridge()
         {
+            /*AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+                                                              {
+                                                                  Log.Error("Unhandled exception:");
+                                                                  Log.Error(args.ExceptionObject.ToString());
+                                                                  Environment.Exit(1);
+                                                              };*/
             if (File.Exists("irc.lock"))
             {
                 Log.Error("IRC lock file found, plugin was not properly disposed of.");
@@ -59,6 +67,11 @@ namespace IRCBridge
                         {
                             if (irc.IsConnected)
                                 irc.ListenOnce(false);
+                            /*if (!init)
+                            {
+                                Connect();
+                                init = true;
+                            }*/
                         };
             PlayerConnected +=
                 entity => SendMessage(entity.GetField<string>("name") + " has connected to the game.");
@@ -69,13 +82,14 @@ namespace IRCBridge
             OnNotify("exitLevel_called", OnExitLevel);
             OnNotify("game_ended", OnExitLevel);
             Log.Info("Connecting to " + server + ":" + port + "/" + channel);
-            new Thread(Connect).Start();
-            OnStartGameType();
+            thread = new Thread(Connect);
+            thread.Start();
         }
 
         ~IRCBridge()
         {
             SendMessage("Plugin getting destroyed...");
+            thread.Abort();
             irc.Disconnect();
             irc = null;
             File.Delete("irc.lock");
@@ -114,6 +128,7 @@ namespace IRCBridge
             SendMessage("Scoreboard: ");
             BuildScores();
             irc.Disconnect();
+            thread.Abort();
             irc = null;
             File.Delete("irc.lock");
         }
@@ -151,21 +166,27 @@ namespace IRCBridge
         {
             try
             {
+                Log.Info("Attempting to connect...");
                 irc.Connect(server, port);
-                irc.ListenOnce();
+                irc.ListenOnce(false);
             }
             catch (Exception e)
             {
-                throw;
+                //throw;
+                Log.Error(e.ToString());
                 return;
             }
+            Log.Info("Logging in.");
             irc.Login(nick, "IW5M IRCBridge Bot");
-            irc.ListenOnce();
+            irc.ListenOnce(false);
+            Log.Info("Joining channel.");
             irc.RfcJoin(channel);
-            irc.ListenOnce();
+            irc.ListenOnce(false);
+            Log.Info("Identifying.");
             irc.RfcPrivmsg("NickServ", "identify " + password);
-            irc.ListenOnce();
-            irc.Listen();
+            irc.ListenOnce(false);
+            OnStartGameType();
+            irc.Listen(false);
         }
 
         public static string ReplaceQuakeColorCodes(string remove)

@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRCBridge", "IRCBridge\IRCB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfinityScript", "src\InfinityScript\InfinityScript.csproj", "{5EDFA999-EB9D-4966-B10C-56D405AF421E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollTheDice", "RollTheDice\RollTheDice.csproj", "{69D77D2E-EF77-47EB-A995-10BC85DC749E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EDFA999-EB9D-4966-B10C-56D405AF421E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
