@@ -137,13 +137,13 @@ namespace IRCBridge
 
         private void BuildScores()
         {
-            SendMessage("Player       Score    Kills Assists Deaths");
+            SendMessage("Player          Score    Kills Assists Deaths");
             var scoreList = (from p in Players
                              orderby p.GetField<int>("score") descending, p.GetField<int>("deaths") ascending
                              select p).ToArray();
             for (int i = 0; i < scoreList.Length; i++)
             {
-                SendMessage(string.Format("{0} {1} {2} {3} {4}", scoreList[i].GetField<string>("name").PadRight(12),
+                SendMessage(string.Format("{0} {1} {2} {3} {4}", scoreList[i].GetField<string>("name").PadRight(15),
                                           scoreList[i].GetField<string>("score").PadRight(8),
                                           scoreList[i].GetField<string>("kills").PadRight(5),
                                           scoreList[i].GetField<string>("assists").PadRight(7),
