@@ -13,6 +13,8 @@ namespace RollTheDice
     public class RollTheDice : BaseScript
     {
         public const int NumOfRolls = 3;
+        public List<int> PlayerStop = new List<int>(); 
+        public Dictionary<int, List<HudElem>> HudElems = new Dictionary<int, List<HudElem>>();  
         public RollTheDice()
         {
             PlayerConnected += RollTheDice_PlayerConnected;
@@ -29,25 +31,36 @@ namespace RollTheDice
         void RollTheDice_PlayerConnected(Entity obj)
         {
             obj.SpawnedPlayer += () => OnPlayerSpawned(obj);
+            obj.OnNotify("disconnect", entity => PlayerStop.Add(obj.GetHashCode()));
         }
 
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
+            PlayerStop.Add(player.GetHashCode());
+            if (HudElems.ContainsKey(player.GetHashCode()))
+                foreach (var elem in HudElems[player.GetHashCode()])
+                {
+                    elem.Call("destroy");
+                    elem.Call("delete");
+                }
+                
         }
 
         public void OnPlayerSpawned(Entity player)
         {
+            if (PlayerStop.Contains(player.GetHashCode()))
+                PlayerStop.Remove(player.GetHashCode());
             player.Call(33395);
             player.SetPerk("specialty_longersprint", false, true);
             player.SetPerk("specialty_fastreload", false, true);
             player.SetPerk("specialty_falldamage", false, true);
-            player.Call("setKillstreaks", "none", "none", "none");
+            //player.Call(@"maps\mp\gametypes\_class::setKillstreaks", "none", "none", "none");
             DoRandom(player, null);
         }
 
         public void DoRandom(Entity player, int? desiredNumber)
         {
-            int? roll = new Random().Next(NumOfRolls-1);
+            int? roll = new Random().Next(NumOfRolls);
             if (desiredNumber != null)
                 roll = desiredNumber;
             var rollname = "";
@@ -55,79 +68,62 @@ namespace RollTheDice
             {
                 case 0:
                     rollname = "^2Extra Speed";
-                    new Thread(() => Speed(player, 1.5)).Start();
+                    OnInterval(300, () => Speed(player, 1.5));
                     break;
                 case 1:
                     rollname = "XM25 Akimbo";
-                    Stock(player, 99);
-                    new Thread(() => Weapon(player, "xm25", "akimbo", null)).Start();
+                    OnInterval(300, () => Stock(player, 99));
+                    OnInterval(300, () => Weapon(player, "xm25", "akimbo", null));
                     break;
                 case 2:
                     rollname = "^2No Recoil";
                     player.Call("recoilscaleon", 0);
                     break;
             }
+            PrintRollNames(player, rollname, 0, roll);
         }
 
-        public void PrintRollNames(Entity player, List<string> names, int index)
+        public void PrintRollNames(Entity player, string name, int index, int? roll)
         {
-            
+            var elem = HudElem.CreateFontString(player, "bigfixed", 0.6f);
+            if (HudElems.ContainsKey(player.GetHashCode()))
+                HudElems[player.GetHashCode()].Add(elem);
+            else
+                HudElems.Add(player.GetHashCode(), new List<HudElem>(new[] {elem}));
+            elem.SetPoint("RIGHT", "RIGHT", -90, 165 - ((index - 1)*13));
+            elem.SetText(string.Format("[{0}] {1}", roll+1, name));
+            player.Call("iPrintLnBold", string.Format("You rolled {0} - {1}", roll+1, name));
+            Call(334, string.Format("{0} rolled [{1}] - {2}", player.GetField<string>("name"), roll+1, name));
         }
 
-        public void Speed(Entity player, double scale)
+        public bool Speed(Entity player, double scale)
         {
-            var loop = true;
-            player.OnNotify("disconnect", entity => loop = false);
-            player.OnNotify("death", entity => loop = false);
-            while (loop)
-            {
-                player.Call("setmovespeedscale", new Parameter((float)scale));
-                Thread.Sleep(50);
-            }
+            if (PlayerStop.Contains(player.GetHashCode()))
+                return false;
+            player.Call("setmovespeedscale", new Parameter((float)scale));
+            return true;
         }
 
-        public void Stock(Entity player, int amount)
+        public bool Stock(Entity player, int amount)
         {
-            var loop = true;
-            player.OnNotify("disconnect", entity => loop = false);
-            player.OnNotify("death", entity => loop = false);
-            while (loop)
-            {
-                
-            }
+            if (PlayerStop.Contains(player.GetHashCode()))
+                return false;
+            return true;
         }
 
         public void Vision(Entity player, string vision, bool thermal)
         {
-            var loop = true;
-            player.OnNotify("disconnect", entity => loop = false);
-            player.OnNotify("death", entity => loop = false);
-            while (loop)
-            {
-
-            }
         }
 
         public void Nades(Entity player, int amount)
         {
-            var loop = true;
-            player.OnNotify("disconnect", entity => loop = false);
-            player.OnNotify("death", entity => loop = false);
-            while (loop)
-            {
-
-            }
         }
 
-        public void Weapon(Entity player, string weapon, string add, string weapon2)
+        public bool Weapon(Entity player, string weapon, string add, string weapon2)
         {
-            var loop = true;
-            player.OnNotify("disconnect", entity => loop = false);
-            player.OnNotify("death", entity => loop = false);
-            while (loop)
-            {
-
-            }
+            if (PlayerStop.Contains(player.GetHashCode()))
+                return false;
+            return true;
         }
     }
 }

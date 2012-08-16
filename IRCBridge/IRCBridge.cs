@@ -137,6 +137,9 @@ namespace IRCBridge
                 case "!players":
                     BuildScores();
                     break;
+                default:
+                    Call("sayall", string.Format("^8[IRC] {0} ^7: {1}", ircEventArgs.Data.Nick, ircEventArgs.Data.Message));
+                    break;
             }
         }
 
