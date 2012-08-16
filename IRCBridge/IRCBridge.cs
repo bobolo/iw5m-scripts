@@ -165,7 +165,16 @@ namespace IRCBridge
         {
             //Log.Debug("Sending match stats...");
             var winner = "";
-            winner = para.As<Entity>().IsPlayer ? para.As<Entity>().GetField<string>("name") : para.As<string>();
+            switch (para.Type)
+            {
+                case VariableType.String:
+                    winner = para.As<string>();
+                    break;
+                case VariableType.Entity:
+                    if (para.As<Entity>().IsPlayer)
+                        winner = para.As<Entity>().GetField<string>("name");
+                    break;
+            }
             SendMessage("Match ended, level is exiting...");
             SendMessage("Scoreboard (Winner is " + winner + "): ");
             //Log.Debug("Constructing match stats...");
@@ -198,8 +207,9 @@ namespace IRCBridge
 
         public void SendMessage(string message)
         {
-            if (irc.IsConnected)
-                irc.SendMessage(SendType.Message, channel, ReplaceQuakeColorCodes(message));
+            if (irc != null)
+                if (irc.IsConnected)
+                    irc.SendMessage(SendType.Message, channel, ReplaceQuakeColorCodes(message));
         }
 
         public void Connect()
