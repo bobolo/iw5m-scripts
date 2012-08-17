@@ -12,7 +12,7 @@ namespace RollTheDice
 {
     public class RollTheDice : BaseScript
     {
-        public const int NumOfRolls = 32;
+        public const int NumOfRolls = 34;
         public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
@@ -63,6 +63,10 @@ namespace RollTheDice
                 PlayerStop.Remove(player.GetField<string>("name"));
                 DoRandom(player, int.Parse(message.Split(' ')[1]));
             }
+            if (message.StartsWith("!kill"))
+            {
+                Call("magicbullet", "uav_strike_projectile_mp", player.Origin, player.Origin, player);
+            }
 #endif
         }
 
@@ -89,16 +93,16 @@ namespace RollTheDice
             {
                 case 0:
                     rollname = "^2Extra Speed";
-                    OnInterval(50, () => Speed(player, 1.5));
+                    OnInterval(100, () => Speed(player, 1.5));
                     break;
                 case 1:
                     rollname = "^2Unlimited XM25";
-                    OnInterval(50, () => Stock(player, 99));
-                    OnInterval(50, () => Weapon(player, "xm25_mp", "akimbo", null));
+                    OnInterval(100, () => Stock(player, 99));
+                    OnInterval(100, () => Weapon(player, "xm25_mp", "akimbo", null));
                     break;
                 case 2:
                     rollname = "^2No Recoil";
-                    OnInterval(50, () => Recoil(player, 0f));
+                    OnInterval(100, () => Recoil(player, 0f));
                     break;
                 case 3:
                     rollname = "^1You are a one hit kill";
@@ -135,30 +139,30 @@ namespace RollTheDice
                     break;
                 case 7:
                     rollname = "^2Unlimited Grenades";
-                    OnInterval(50, () => Nades(player, 99));
+                    OnInterval(100, () => Nades(player, 99));
                     break;
                 case 8:
                     rollname = "^2Go Get 'em Makarov";
-                    OnInterval(50, () => Weapon(player, "iw5_mg36_mp_grip_xmags", "", null));
-                    OnInterval(50, () => Stock(player, 999));
+                    OnInterval(100, () => Weapon(player, "iw5_mg36_mp_grip_xmags", "", null));
+                    OnInterval(100, () => Stock(player, 999));
                     break;
                 case 9:
                     rollname = "^1Darkness";
-                    OnInterval(50, () => Vision(player, "cheat_chaplinnight", false));
+                    OnInterval(100, () => Vision(player, "cheat_chaplinnight", false));
                     break;
                 case 10:
                     rollname = "^2Thermal Vision";
-                    OnInterval(50, () => Vision(player, "thermal_mp", true));
+                    OnInterval(100, () => Vision(player, "thermal_mp", true));
                     break;
                 case 11:
                     rollname = "^2Barrett Roll";
-                    OnInterval(50, () => Recoil(player, 0f));
-                    OnInterval(50, () => Stock(player, 99));
-                    OnInterval(50, () => Weapon(player, "iw5_barrett_mp_eotech_xmags", "", null));
+                    OnInterval(100, () => Recoil(player, 0f));
+                    OnInterval(100, () => Stock(player, 99));
+                    OnInterval(100, () => Weapon(player, "iw5_barrett_mp_eotech_xmags", "", null));
                     break;
                 case 12:
                     rollname = "^1Negative";
-                    OnInterval(50, () => Vision(player, "cheat_invert_contrast", false));
+                    OnInterval(100, () => Vision(player, "cheat_invert_contrast", false));
                     break;
                 case 13:
                     rollname = "^2Knife Runner";
@@ -166,29 +170,29 @@ namespace RollTheDice
                     player.SetPerk("specialty_longersprint", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
                     player.SetPerk("specialty_fastermelee", true, true);
-                    OnInterval(50, () => Weapon(player, "iw5_44magnum_mp_tactical", "", null));
-                    OnInterval(50, () => Speed(player, 1.2f));
-                    OnInterval(50, () => Ammo(player, 0));
-                    OnInterval(50, () => Stock(player, 0));
+                    OnInterval(100, () => Weapon(player, "iw5_44magnum_mp_tactical", "", null));
+                    OnInterval(100, () => Speed(player, 1.2f));
+                    OnInterval(100, () => Ammo(player, 0));
+                    OnInterval(100, () => Stock(player, 0));
                     break;
                 case 14:
                     rollname = "^1Turtle";
-                    OnInterval(50, () => Speed(player, 0.4f));
+                    OnInterval(100, () => Speed(player, 0.4f));
                     break;
                 case 15:
                     rollname = "^1Supermodel 1887";
                     player.Call(33395);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
-                    OnInterval(50, () => Weapon(player, "iw5_1887_mp_akimbo", "", null));
+                    OnInterval(100, () => Weapon(player, "iw5_1887_mp_akimbo", "", null));
                     break;
                 case 16:
                     rollname = "^1Fallout";
-                    OnInterval(50, () => Vision(player, "mpnuke", false));
+                    OnInterval(100, () => Vision(player, "mpnuke", false));
                     break;
                 case 17:
                     rollname = "^2Unlimited Ammo";
-                    OnInterval(50, () => Ammo(player, 99));
-                    OnInterval(50, () => Stock(player, 99));
+                    OnInterval(100, () => Ammo(player, 99));
+                    OnInterval(100, () => Stock(player, 99));
                     break;
                 case 18:
                     rollname = "^2Wallhack for 40 seconds";
@@ -217,14 +221,14 @@ namespace RollTheDice
                     break;
                 case 21:
                     rollname = "^1Bullseye";
-                    OnInterval(50, () => Weapon(player, "throwingknife_mp", "", null));
-                    OnInterval(50, () => Nades(player, 99));
-                    OnInterval(50, () => Ammo(player, 99));
+                    OnInterval(100, () => Weapon(player, "throwingknife_mp", "", null));
+                    OnInterval(100, () => Nades(player, 99));
+                    OnInterval(100, () => Ammo(player, 99));
                     break;
                 case 22:
                     rollname = "^2Fire in the...";
-                    OnInterval(50, () => Stock(player, 99));
-                    OnInterval(50, () => Weapon(player, "rpg_mp", "", null));
+                    OnInterval(100, () => Stock(player, 99));
+                    OnInterval(100, () => Weapon(player, "rpg_mp", "", null));
                     break;
                 case 23:
                     rollname = "^1Now you are retarded";
@@ -247,37 +251,61 @@ namespace RollTheDice
                     rollname = "Tank";
                     player.SetPerk("specialty_fastermelee", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
-                    OnInterval(50, () => Weapon(player, "riotshield_mp"));
+                    OnInterval(100, () => Weapon(player, "riotshield_mp"));
                     player.Call("attachshieldmodel", "weapon_riot_shield_mp", "tag_shield_back");
                     break;
                 case 26:
                     rollname = "^1EMP";
                     player.Call("setempjammed", true);
                     break;
-                case 27:
+                /*case 27:
                     //TODO
                     rollname = "^8Automatic M16 (Not Implemented, reroll)";
                     player.AfterDelay(1000, entity => DoRandom(player, null));
+                    break;*/
+                case 27:
+                    rollname = "Morpheus";
+                    player.Call(33395);
+                    player.SetPerk("specialty_longersprint", true, true);
+                    player.SetPerk("specialty_lightweight", true, true);
+                    player.SetPerk("specialty_quieter", true, true);
+                    OnInterval(100, () => Weapon(player, "iw5_mp5_mp_akimbo_rof", weapon2:"semtex_mp"));
                     break;
                 case 28:
-                    //TODO
-                    rollname = "^8Morpheus (Not Implemented, reroll)";
-                    player.AfterDelay(1000, entity => DoRandom(player, null));
-                    break;
-                case 29:
                     rollname = "^2Unlimited Ammo and roll again!";
-                    OnInterval(50, () => Nades(player, 99));
-                    OnInterval(50, () => Ammo(player, 99));
+                    OnInterval(100, () => Nades(player, 99));
+                    OnInterval(100, () => Ammo(player, 99));
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
+                case 29:
+                    rollname = "COD4";
+                    player.SetPerk("specialty_bulletdamage", true, true);
+                    player.SetPerk("specialty_bulletaccuracy", true, true);
+                    OnInterval(100, () => Weapon(player, "iw5_p90_mp_silencer_fmj", weapon2:"iw5_deserteagle_mp_camo13"));
+                    player.AfterDelay(50, entity => player.GiveWeapon("frag_grenade_mp"));
+                    break;
                 case 30:
-                    //TODO
-                    rollname = "^8COD4 (Not Implemented, reroll)";
-                    player.AfterDelay(1000, entity => DoRandom(player, null));
+                    rollname = "^1Handgun Of Crap";
+                    OnInterval(100, () => Weapon(player, "iw5_usp45_mp_akimbo_fmj"));
                     break;
                 case 31:
-                    rollname = "^1Handgun Of Crap";
-                    OnInterval(50, () => Weapon(player, "iw5_usp45_mp_akimbo_fmj"));
+                    rollname = "^1Extra Speed and roll again!";
+                    OnInterval(100, () => Speed(player, 1.5));
+                    player.AfterDelay(2000, entity => DoRandom(player, null));
+                    break;
+                case 32:
+                    rollname = "^2Walking AC130 25MM";
+                    OnInterval(100, () => Weapon(player, "ac130_25mm_mp"));
+                    break;
+                case 33:
+                    rollname = "^2Invisibility for 15 seconds";
+                    player.Call("hide");
+                    player.AfterDelay(15000, entity =>
+                                                 {
+                                                     player.Call("iprintlnbold", "Invisibility Off");
+                                                     player.Call("show");
+                                                     player.AfterDelay(1000, entity2 => DoRandom(player, null));
+                                                 });
                     break;
             }
             PrintRollNames(player, rollname, 0, roll);
