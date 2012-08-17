@@ -82,7 +82,7 @@ namespace RollTheDice
                     break;
                 case 2:
                     rollname = "^2No Recoil";
-                    player.Call("player_recoilscaleon", 0);
+                    player.Call("player_recoilscaleon", 0f);
                     break;
                 case 3:
                     rollname = "^1You are a one hit kill";
@@ -95,8 +95,8 @@ namespace RollTheDice
                     break;
                 case 5:
                     rollname = "^2Triple HP";
-                    player.SetField("maxhealth", 300);
-                    player.Health = 300;
+                    player.SetField("maxhealth", player.Health*3);
+                    player.Health = player.Health*3;
                     break;
             }
             PrintRollNames(player, rollname, 0, roll);
@@ -104,13 +104,17 @@ namespace RollTheDice
 
         public void PrintRollNames(Entity player, string name, int index, int? roll)
         {
-            HudElem elem;
-            elem = player.HasField("rtd_rolls") ? player.GetField<HudElem>("rtd_rolls") : HudElem.CreateFontString(player, "bigfixed", 0.6f);
+            HudElem elem = player.HasField("rtd_rolls") ? player.GetField<HudElem>("rtd_rolls") : HudElem.CreateFontString(player, "bigfixed", 0.6f);
             elem.SetPoint("RIGHT", "RIGHT", -90, 165 - ((index - 1)*13));
             elem.SetText(string.Format("[{0}] {1}", roll+1, name));
             player.SetField("rtd_rolls", new Parameter(elem));
             player.Call("iPrintLnBold", string.Format("You rolled {0} - {1}", roll+1, name));
             Call(334, string.Format("{0} rolled [{1}] - {2}", player.GetField<string>("name"), roll+1, name));
+        }
+
+        public void ResetPlayer(Entity player)
+        {
+            player.Call("setmovespeedscale", 1);
         }
 
         public bool Speed(Entity player, double scale)
