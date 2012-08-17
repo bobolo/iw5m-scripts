@@ -13,7 +13,7 @@ namespace RollTheDice
     public class RollTheDice : BaseScript
     {
         public const int NumOfRolls = 6;
-        public List<int> PlayerStop = new List<int>();
+        public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
         {
@@ -34,17 +34,19 @@ namespace RollTheDice
             tickcount++;
             if (tickcount % 10 == 0)
             {
+                tickcount = 0;
             }
         }
 
         void RollTheDice_PlayerConnected(Entity obj)
         {
             obj.SpawnedPlayer += () => OnPlayerSpawned(obj);
-            obj.OnNotify("disconnect", entity => PlayerStop.Add(obj.GetHashCode()));
+            obj.OnNotify("disconnect", entity => PlayerStop.Add(obj.GetField<string>("name")));
         }
 
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
+            PlayerStop.Add(player.GetField<string>("name"));
         }
 
         public override void OnPlayerDamage(Entity player, Entity inflictor, Entity attacker, int damage, int dFlags, string mod, string weapon, Vector3 point, Vector3 dir, string hitLoc)
@@ -55,17 +57,17 @@ namespace RollTheDice
         {
             if (message.StartsWith("!roll "))
             {
-                PlayerStop.Add(player.GetHashCode());
+                PlayerStop.Add(player.GetField<string>("name"));
                 Thread.Sleep(500);
-                PlayerStop.Remove(player.GetHashCode());
+                PlayerStop.Remove(player.GetField<string>("name"));
                 DoRandom(player, int.Parse(message.Split(' ')[1]));
             }
         }
 
         public void OnPlayerSpawned(Entity player)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
-                PlayerStop.Remove(player.GetHashCode());
+            if (PlayerStop.Contains(player.GetField<string>("name")))
+                PlayerStop.Remove(player.GetField<string>("name"));
             ResetPlayer(player);
             player.Call(33395);
             player.SetPerk("specialty_longersprint", false, true);
@@ -84,7 +86,6 @@ namespace RollTheDice
             switch (roll)
             {
                 case 0:
-                    //Still does not reset on respawn
                     rollname = "^2Extra Speed";
                     OnInterval(50, () => Speed(player, 1.5));
                     break;
@@ -132,16 +133,15 @@ namespace RollTheDice
 
         public bool Speed(Entity player, double scale)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            Log.Debug("Calling setmovespeedscale.");
             player.Call("setmovespeedscale", new Parameter((float)scale));
             return true;
         }
 
         public bool Stock(Entity player, int amount)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             var wep = player.CurrentWeapon;
             player.Call("setweaponammostock", wep, amount);
@@ -150,7 +150,7 @@ namespace RollTheDice
 
         public bool Ammo(Entity player, int amount)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             var wep = player.CurrentWeapon;
             player.Call("setweaponammoclip", wep, amount);
@@ -165,7 +165,7 @@ namespace RollTheDice
 
         public bool Nades(Entity player, int amount)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             var offhand = Call<string>("getcurrentoffhand");
             player.Call("setweaponammoclip", offhand, amount);
@@ -175,7 +175,7 @@ namespace RollTheDice
 
         public bool Weapon(Entity player, string weapon, string add, string weapon2)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             if (player.CurrentWeapon.Contains(weapon))
                 return true;
@@ -188,7 +188,7 @@ namespace RollTheDice
 
         public bool Recoil(Entity player, float scale)
         {
-            if (PlayerStop.Contains(player.GetHashCode()))
+            if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             player.Call("recoilscaleon", scale);
             return true;
