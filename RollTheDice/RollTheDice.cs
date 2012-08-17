@@ -188,7 +188,7 @@ namespace RollTheDice
                     rollname = "^1Supermodel 1887";
                     player.Call(33395);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_1887_mp_akimbo", "", null));
+                    OnInterval(100, () => Weapon(player, "iw5_1887_mp_akimbo", "akimbo", null));
                     break;
                 case 16:
                     rollname = "^1Fallout";
@@ -279,7 +279,7 @@ namespace RollTheDice
                     player.SetPerk("specialty_longersprint", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
                     player.SetPerk("specialty_quieter", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_mp5_mp_akimbo_rof", weapon2:"semtex_mp"));
+                    OnInterval(100, () => Weapon(player, "iw5_mp5_mp_rof", "akimbo", weapon2:"semtex_mp"));
                     break;
                 case 28:
                     rollname = "^2Unlimited Ammo and roll again!";
@@ -292,7 +292,7 @@ namespace RollTheDice
                     rollname = "COD4";
                     player.SetPerk("specialty_bulletdamage", true, true);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_p90_mp_silencer_fmj", weapon2:"iw5_deserteagle_mp_camo13"));
+                    OnInterval(100, () => Weapon(player, "iw5_p90_mp_silencer", weapon2:"iw5_deserteagle_mp"));
                     player.AfterDelay(50, entity => player.GiveWeapon("frag_grenade_mp"));
                     break;
                 case 30:
