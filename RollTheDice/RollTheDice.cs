@@ -51,6 +51,17 @@ namespace RollTheDice
         {
         }
 
+        public override void OnSay(Entity player, string name, string message)
+        {
+            if (message.StartsWith("!roll "))
+            {
+                PlayerStop.Add(player.GetHashCode());
+                Thread.Sleep(500);
+                PlayerStop.Remove(player.GetHashCode());
+                DoRandom(player, int.Parse(message.Split(' ')[1]));
+            }
+        }
+
         public void OnPlayerSpawned(Entity player)
         {
             if (PlayerStop.Contains(player.GetHashCode()))
@@ -76,13 +87,13 @@ namespace RollTheDice
                     OnInterval(50, () => Speed(player, 1.5));
                     break;
                 case 1:
-                    rollname = "XM25 Akimbo";
+                    rollname = "^2Unlimited XM25";
                     OnInterval(50, () => Stock(player, 99));
-                    OnInterval(50, () => Weapon(player, "xm25", "akimbo", null));
+                    OnInterval(50, () => Weapon(player, "xm25_mp", "akimbo", null));
                     break;
                 case 2:
                     rollname = "^2No Recoil";
-                    player.Call("player_recoilscaleon", 0f);
+                    player.Call("recoilscaleon", 0f);
                     break;
                 case 3:
                     rollname = "^1You are a one hit kill";
@@ -114,13 +125,15 @@ namespace RollTheDice
 
         public void ResetPlayer(Entity player)
         {
-            player.Call("setmovespeedscale", 1);
         }
 
         public bool Speed(Entity player, double scale)
         {
             if (PlayerStop.Contains(player.GetHashCode()))
+            {
+                player.Call("setmovespeedscale", 1f);
                 return false;
+            }
             player.Call("setmovespeedscale", new Parameter((float)scale));
             return true;
         }
@@ -163,6 +176,8 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetHashCode()))
                 return false;
+            if (player.CurrentWeapon.Contains(weapon))
+                return true;
             player.TakeAllWeapons();
             player.Call("giveweapon", weapon, 8, (add == "akimbo"));
             Ammo(player, 999);
