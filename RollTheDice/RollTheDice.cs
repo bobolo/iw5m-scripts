@@ -153,10 +153,12 @@ namespace RollTheDice
                     OnInterval(100, () => Vision(player, "cheat_chaplinnight", false));
                     break;
                 case 10:
+                    //TODO: Doesn't work
                     rollname = "^2Thermal Vision";
-                    OnInterval(100, () => Vision(player, "thermal_mp", true));
+                    OnInterval(100, () => Vision(player, "ac130_thermal_mp", true));
                     break;
                 case 11:
+                    //TODO: Doesn't work
                     rollname = "^2Barrett Roll";
                     OnInterval(100, () => Recoil(player, 0f));
                     OnInterval(100, () => Stock(player, 99));
@@ -182,6 +184,7 @@ namespace RollTheDice
                     OnInterval(100, () => Speed(player, 0.4f));
                     break;
                 case 15:
+                    //TODO: Doesn't work
                     rollname = "^1Supermodel 1887";
                     player.Call(33395);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
@@ -230,6 +233,7 @@ namespace RollTheDice
                 case 22:
                     rollname = "^2Fire in the...";
                     OnInterval(100, () => Stock(player, 99));
+                    OnInterval(100, () => Ammo(player, 99));
                     OnInterval(100, () => Weapon(player, "rpg_mp", "", null));
                     break;
                 case 23:
@@ -250,11 +254,14 @@ namespace RollTheDice
                     player.SwitchToWeaponImmediate("iw5_ump45_mp_silencer_xmags");
                     break;
                 case 25:
+                    //TODO: Weapon not given
                     rollname = "Tank";
                     player.SetPerk("specialty_fastermelee", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
                     OnInterval(100, () => Weapon(player, "riotshield_mp"));
-                    player.Call("attachshieldmodel", "weapon_riot_shield_mp", "tag_shield_back");
+                    player.AfterDelay(10,
+                                      entity =>
+                                      player.Call("attachshieldmodel", "weapon_riot_shield_mp", "tag_shield_back"));
                     break;
                 case 26:
                     rollname = "^1EMP";
@@ -266,6 +273,7 @@ namespace RollTheDice
                     player.AfterDelay(1000, entity => DoRandom(player, null));
                     break;*/
                 case 27:
+                    //TODO: Doesn't work
                     rollname = "Morpheus";
                     player.Call(33395);
                     player.SetPerk("specialty_longersprint", true, true);
@@ -280,6 +288,7 @@ namespace RollTheDice
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
                 case 29:
+                    //TODO: Doesn't work
                     rollname = "COD4";
                     player.SetPerk("specialty_bulletdamage", true, true);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
@@ -287,6 +296,7 @@ namespace RollTheDice
                     player.AfterDelay(50, entity => player.GiveWeapon("frag_grenade_mp"));
                     break;
                 case 30:
+                    //TODO: Doesn't work
                     rollname = "^1Handgun Of Crap";
                     OnInterval(100, () => Weapon(player, "iw5_usp45_mp_akimbo_fmj"));
                     break;
@@ -296,6 +306,7 @@ namespace RollTheDice
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
                 case 32:
+                    //TODO: Doesn't work
                     rollname = "^2Walking AC130 25MM";
                     OnInterval(100, () => Weapon(player, "ac130_25mm_mp"));
                     break;
@@ -378,7 +389,7 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            if (player.CurrentWeapon.Contains(weapon) || (weapon2 != null && player.CurrentWeapon.Contains(weapon2)))
+            if (player.CurrentWeapon.Contains(GetWeaponName(weapon)) || (weapon2 != null && player.CurrentWeapon.Contains(GetWeaponName(weapon2))))
                 return true;
             if (strip)
                 player.TakeAllWeapons();
@@ -396,6 +407,20 @@ namespace RollTheDice
                 return false;
             player.Call("recoilscaleon", scale);
             return true;
+        }
+
+        public bool Attach(Entity player, string model, string tag)
+        {
+            if (PlayerStop.Contains(player.GetField<string>("name")))
+                return false;
+            player.Call("attachshieldmodel", model, tag);
+            return true;
+        }
+
+        public static string GetWeaponName(string name)
+        {
+            var parts = name.Split('_');
+            return parts[0] == "iw5" ? parts[1] : parts[0];
         }
     }
 }
