@@ -12,7 +12,7 @@ namespace RollTheDice
 {
     public class RollTheDice : BaseScript
     {
-        public const int NumOfRolls = 11;
+        public const int NumOfRolls = 21;
         public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
@@ -116,22 +116,22 @@ namespace RollTheDice
                     break;
                 case 6:
                     rollname = "^2All Perks";
-                    player.SetPerk("specialty__longersprint", true, false);
-                    player.SetPerk("specialty__fastreload", true, false);
-                    player.SetPerk("specialty__scavenger", true, false);
-                    player.SetPerk("specialty__blindeye", true, false);
-                    player.SetPerk("specialty__paint", true, false);
-                    player.SetPerk("specialty__hardline", true, false);
-                    player.SetPerk("specialty__coldblooded", true, false);
-                    player.SetPerk("specialty__quickdraw", true, false);
-                    player.SetPerk("specialty__twoprimaries", true, false);
-                    player.SetPerk("specialty__assists", true, false);
-                    player.SetPerk("_specialty__blastshield", true, false);
-                    player.SetPerk("specialty__detectexplosive", true, false);
-                    player.SetPerk("specialty__autospot", true, false);
-                    player.SetPerk("specialty__bulletaccuracy", true, false);
-                    player.SetPerk("specialty__quieter", true, false);
-                    player.SetPerk("specialty__stalker", true, false);
+                    player.SetPerk("specialty_longersprint", true, false);
+                    player.SetPerk("specialty_fastreload", true, false);
+                    player.SetPerk("specialty_scavenger", true, false);
+                    player.SetPerk("specialty_blindeye", true, false);
+                    player.SetPerk("specialty_paint", true, false);
+                    player.SetPerk("specialty_hardline", true, false);
+                    player.SetPerk("specialty_coldblooded", true, false);
+                    player.SetPerk("specialty_quickdraw", true, false);
+                    player.SetPerk("specialty_twoprimaries", true, false);
+                    player.SetPerk("specialty_assists", true, false);
+                    player.SetPerk("_specialty_blastshield", true, false);
+                    player.SetPerk("specialty_detectexplosive", true, false);
+                    player.SetPerk("specialty_autospot", true, false);
+                    player.SetPerk("specialty_bulletaccuracy", true, false);
+                    player.SetPerk("specialty_quieter", true, false);
+                    player.SetPerk("specialty_stalker", true, false);
                     break;
                 case 7:
                     rollname = "^2Unlimited Frag Grenades";
@@ -140,14 +140,80 @@ namespace RollTheDice
                 case 8:
                     rollname = "^2Go Get 'em Makarov";
                     OnInterval(50, () => Weapon(player, "iw5_mg36_mp_grip_xmags", "", null));
+                    OnInterval(50, () => Stock(player, 999));
                     break;
                 case 9:
                     rollname = "^1Darkness";
                     OnInterval(50, () => Vision(player, "cheat_chaplinnight", false));
                     break;
                 case 10:
-                    rollname = "^2Thermal vision";
+                    rollname = "^2Thermal Vision";
                     OnInterval(50, () => Vision(player, "thermal_mp", true));
+                    break;
+                case 11:
+                    rollname = "^2Barrett Roll";
+                    OnInterval(50, () => Recoil(player, 0f));
+                    OnInterval(50, () => Stock(player, 99));
+                    OnInterval(50, () => Weapon(player, "iw5_barrett_mp_eotech_xmags", "", null));
+                    break;
+                case 12:
+                    rollname = "^1Negative";
+                    OnInterval(50, () => Vision(player, "cheat_invert_contrast", false));
+                    break;
+                case 13:
+                    rollname = "^2Knife Runner";
+                    player.Call(33395);
+                    player.SetPerk("specialty_longersprint", true, true);
+                    player.SetPerk("specialty_lightweight", true, true);
+                    player.SetPerk("specialty_fastermelee", true, true);
+                    OnInterval(50, () => Weapon(player, "iw5_44magnum_mp_tactical", "", null));
+                    OnInterval(50, () => Speed(player, 1.2f));
+                    OnInterval(50, () => Ammo(player, 0));
+                    OnInterval(50, () => Stock(player, 0));
+                    break;
+                case 14:
+                    rollname = "^1Turtle";
+                    OnInterval(50, () => Speed(player, 0.4f));
+                    break;
+                case 15:
+                    rollname = "^1Supermodel 1887";
+                    player.Call(33395);
+                    player.SetPerk("specialty_bulletaccuracy", true, true);
+                    OnInterval(50, () => Weapon(player, "iw5_1887_mp_akimbo", "", null));
+                    break;
+                case 16:
+                    rollname = "^1Fallout";
+                    OnInterval(50, () => Vision(player, "mpnuke", false));
+                    break;
+                case 17:
+                    rollname = "^2Unlimited Ammo";
+                    OnInterval(50, () => Ammo(player, 99));
+                    OnInterval(50, () => Stock(player, 99));
+                    break;
+                case 18:
+                    rollname = "^2Wallhack for 40 seconds";
+                    player.Call("thermalvisionfofoverlayon");
+                    player.AfterDelay(40000, entity =>
+                                                 {
+                                                     player.Call("thermalvisionfofoverlayoff");
+                                                     player.Call("iprintlnbold", "Wallhack Off");
+                                                 });
+                    break;
+                case 19:
+                    rollname = "^2Double HP and roll again!";
+                    player.SetField("maxhealth", player.Health*2);
+                    player.Health = player.Health*2;
+                    player.AfterDelay(2000, entity => DoRandom(player, null));
+                    break;
+                case 20:
+                    rollname = "^2Godmode for 15 seconds";
+                    player.Health = -1;
+                    player.AfterDelay(15000, entity =>
+                                                 {
+                                                     player.Call("iprintlnbold", "Godmode Off");
+                                                     player.Health = player.GetField<int>("maxhealth");
+                                                     player.AfterDelay(1000, entity2 => DoRandom(player, null));
+                                                 });
                     break;
             }
             PrintRollNames(player, rollname, 0, roll);
