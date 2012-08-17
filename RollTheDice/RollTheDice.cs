@@ -215,6 +215,45 @@ namespace RollTheDice
                                                      player.AfterDelay(1000, entity2 => DoRandom(player, null));
                                                  });
                     break;
+                case 21:
+                    rollname = "^1Bullseye";
+                    OnInterval(50, () => Weapon(player, "throwingknife_mp", "", null));
+                    OnInterval(50, () => Nades(player, 99));
+                    OnInterval(50, () => Ammo(player, 99));
+                    break;
+                case 22:
+                    rollname = "^2Fire in the...";
+                    OnInterval(50, () => Stock(player, 99));
+                    OnInterval(50, () => Weapon(player, "rpg_mp", "", null));
+                    break;
+                case 23:
+                    rollname = "^1Now you are retarded";
+                    player.Call("allowads", false);
+                    player.Call("allowsprint", false);
+                    player.Call("allowads", false);
+                    break;
+                case 24:
+                    rollname = "AZUMOOB's Sub Setup";
+                    player.TakeAllWeapons();
+                    player.Call(33395);
+                    player.SetPerk("specialty_fastermelee", true, true);
+                    player.SetPerk("specialty_bulletaccuracy", true, true);
+                    player.SetPerk("specialty_bulletdamage", true, true);
+                    player.GiveWeapon("iw5_ump45_mp_silencer_xmags");
+                    player.GiveWeapon("iw5_aa12_mp_xmags_grip_akimbo");
+                    player.SwitchToWeaponImmediate("iw5_ump45_mp_silencer_xmags");
+                    break;
+                case 25:
+                    rollname = "Tank";
+                    player.SetPerk("specialty_fastermelee", true, true);
+                    player.SetPerk("specialty_lightweight", true, true);
+                    OnInterval(50, () => Weapon(player, "riotshield_mp"));
+                    player.Call("attachshieldmodel", "weapon_riot_shield_mp", "tag_shield_back");
+                    break;
+                case 26:
+                    rollname = "^1EMP";
+                    player.Call("setempjammed", true);
+                    break;
             }
             PrintRollNames(player, rollname, 0, roll);
         }
@@ -274,18 +313,13 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            var offhand = Call<string>("getcurrentoffhand");
-            if (offhand != "frag_grenade_mp")
-            {
-                player.TakeWeapon(offhand);
-                player.GiveWeapon("frag_grenade_mp");
-            }
+            var offhand = player.Call<string>("getcurrentoffhand");
             player.Call("setweaponammoclip", offhand, amount);
             player.Call("givemaxammo", offhand);
             return true;
         }
 
-        public bool Weapon(Entity player, string weapon, string add, string weapon2)
+        public bool Weapon(Entity player, string weapon, string add = "", string weapon2 = "")
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
