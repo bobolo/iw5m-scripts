@@ -66,6 +66,7 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetHashCode()))
                 PlayerStop.Remove(player.GetHashCode());
+            ResetPlayer(player);
             player.Call(33395);
             player.SetPerk("specialty_longersprint", false, true);
             player.SetPerk("specialty_fastreload", false, true);
@@ -83,6 +84,7 @@ namespace RollTheDice
             switch (roll)
             {
                 case 0:
+                    //Still does not reset on respawn
                     rollname = "^2Extra Speed";
                     OnInterval(50, () => Speed(player, 1.5));
                     break;
@@ -93,7 +95,7 @@ namespace RollTheDice
                     break;
                 case 2:
                     rollname = "^2No Recoil";
-                    player.Call("recoilscaleon", 0f);
+                    OnInterval(50, () => Recoil(player, 0f));
                     break;
                 case 3:
                     rollname = "^1You are a one hit kill";
@@ -125,15 +127,14 @@ namespace RollTheDice
 
         public void ResetPlayer(Entity player)
         {
+            player.Call("setmovespeedscale", 1f);
         }
 
         public bool Speed(Entity player, double scale)
         {
             if (PlayerStop.Contains(player.GetHashCode()))
-            {
-                player.Call("setmovespeedscale", 1f);
                 return false;
-            }
+            Log.Debug("Calling setmovespeedscale.");
             player.Call("setmovespeedscale", new Parameter((float)scale));
             return true;
         }
@@ -180,7 +181,16 @@ namespace RollTheDice
                 return true;
             player.TakeAllWeapons();
             player.Call("giveweapon", weapon, 8, (add == "akimbo"));
+            player.SwitchToWeaponImmediate(weapon);
             Ammo(player, 999);
+            return true;
+        }
+
+        public bool Recoil(Entity player, float scale)
+        {
+            if (PlayerStop.Contains(player.GetHashCode()))
+                return false;
+            player.Call("recoilscaleon", scale);
             return true;
         }
     }
