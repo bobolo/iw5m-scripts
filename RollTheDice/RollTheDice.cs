@@ -4,8 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using InfinityScript;
 
@@ -35,11 +34,6 @@ namespace RollTheDice
             tickcount++;
             if (tickcount % 10 == 0)
             {
-                foreach (var roll in from player in Players where PlayerStop.Contains(player.GetHashCode()) where player.HasField("rtd_rolls") select player.GetField<HudElem>("rtd_rolls"))
-                {
-                    Debug.WriteLine("Destroying elems for someone");
-                    roll.Alpha = 0;
-                }
             }
         }
 
@@ -110,7 +104,8 @@ namespace RollTheDice
 
         public void PrintRollNames(Entity player, string name, int index, int? roll)
         {
-            var elem = HudElem.CreateFontString(player, "bigfixed", 0.6f);
+            HudElem elem;
+            elem = player.HasField("rtd_rolls") ? player.GetField<HudElem>("rtd_rolls") : HudElem.CreateFontString(player, "bigfixed", 0.6f);
             elem.SetPoint("RIGHT", "RIGHT", -90, 165 - ((index - 1)*13));
             elem.SetText(string.Format("[{0}] {1}", roll+1, name));
             player.SetField("rtd_rolls", new Parameter(elem));
@@ -165,7 +160,7 @@ namespace RollTheDice
             if (PlayerStop.Contains(player.GetHashCode()))
                 return false;
             player.TakeAllWeapons();
-            player.Call("giveweapon", weapon, (add == "akimbo"));
+            player.Call("giveweapon", weapon, 8, (add == "akimbo"));
             Ammo(player, 999);
             return true;
         }
