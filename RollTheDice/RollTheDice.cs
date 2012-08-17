@@ -12,7 +12,7 @@ namespace RollTheDice
 {
     public class RollTheDice : BaseScript
     {
-        public const int NumOfRolls = 6;
+        public const int NumOfRolls = 11;
         public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
@@ -55,6 +55,7 @@ namespace RollTheDice
 
         public override void OnSay(Entity player, string name, string message)
         {
+#if DEBUG
             if (message.StartsWith("!roll "))
             {
                 PlayerStop.Add(player.GetField<string>("name"));
@@ -62,6 +63,7 @@ namespace RollTheDice
                 PlayerStop.Remove(player.GetField<string>("name"));
                 DoRandom(player, int.Parse(message.Split(' ')[1]));
             }
+#endif
         }
 
         public void OnPlayerSpawned(Entity player)
@@ -112,6 +114,41 @@ namespace RollTheDice
                     player.SetField("maxhealth", player.Health*3);
                     player.Health = player.Health*3;
                     break;
+                case 6:
+                    rollname = "^2All Perks";
+                    player.SetPerk("specialty__longersprint", true, false);
+                    player.SetPerk("specialty__fastreload", true, false);
+                    player.SetPerk("specialty__scavenger", true, false);
+                    player.SetPerk("specialty__blindeye", true, false);
+                    player.SetPerk("specialty__paint", true, false);
+                    player.SetPerk("specialty__hardline", true, false);
+                    player.SetPerk("specialty__coldblooded", true, false);
+                    player.SetPerk("specialty__quickdraw", true, false);
+                    player.SetPerk("specialty__twoprimaries", true, false);
+                    player.SetPerk("specialty__assists", true, false);
+                    player.SetPerk("_specialty__blastshield", true, false);
+                    player.SetPerk("specialty__detectexplosive", true, false);
+                    player.SetPerk("specialty__autospot", true, false);
+                    player.SetPerk("specialty__bulletaccuracy", true, false);
+                    player.SetPerk("specialty__quieter", true, false);
+                    player.SetPerk("specialty__stalker", true, false);
+                    break;
+                case 7:
+                    rollname = "^2Unlimited Frag Grenades";
+                    OnInterval(50, () => Nades(player, 99));
+                    break;
+                case 8:
+                    rollname = "^2Go Get 'em Makarov";
+                    OnInterval(50, () => Weapon(player, "iw5_mg36_mp_grip_xmags", "", null));
+                    break;
+                case 9:
+                    rollname = "^1Darkness";
+                    OnInterval(50, () => Vision(player, "cheat_chaplinnight", false));
+                    break;
+                case 10:
+                    rollname = "^2Thermal vision";
+                    OnInterval(50, () => Vision(player, "thermal_mp", true));
+                    break;
             }
             PrintRollNames(player, rollname, 0, roll);
         }
@@ -159,8 +196,12 @@ namespace RollTheDice
             return true;
         }
 
-        public void Vision(Entity player, string vision, bool thermal)
+        public bool Vision(Entity player, string vision, bool thermal)
         {
+            if (PlayerStop.Contains(player.GetField<string>("name")))
+                return false;
+            player.Call(thermal ? "visionsetthermalforplayer" : "visionsetnakedforplayer", vision, 1);
+            return true;
         }
 
         public bool Nades(Entity player, int amount)
@@ -168,6 +209,11 @@ namespace RollTheDice
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
             var offhand = Call<string>("getcurrentoffhand");
+            if (offhand != "frag_grenade_mp")
+            {
+                player.TakeWeapon(offhand);
+                player.GiveWeapon("frag_grenade_mp");
+            }
             player.Call("setweaponammoclip", offhand, amount);
             player.Call("givemaxammo", offhand);
             return true;
