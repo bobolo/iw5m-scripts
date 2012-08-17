@@ -12,7 +12,7 @@ namespace RollTheDice
 {
     public class RollTheDice : BaseScript
     {
-        public const int NumOfRolls = 21;
+        public const int NumOfRolls = 32;
         public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
@@ -134,7 +134,7 @@ namespace RollTheDice
                     player.SetPerk("specialty_stalker", true, false);
                     break;
                 case 7:
-                    rollname = "^2Unlimited Frag Grenades";
+                    rollname = "^2Unlimited Grenades";
                     OnInterval(50, () => Nades(player, 99));
                     break;
                 case 8:
@@ -254,6 +254,31 @@ namespace RollTheDice
                     rollname = "^1EMP";
                     player.Call("setempjammed", true);
                     break;
+                case 27:
+                    //TODO
+                    rollname = "^8Automatic M16 (Not Implemented, reroll)";
+                    player.AfterDelay(1000, entity => DoRandom(player, null));
+                    break;
+                case 28:
+                    //TODO
+                    rollname = "^8Morpheus (Not Implemented, reroll)";
+                    player.AfterDelay(1000, entity => DoRandom(player, null));
+                    break;
+                case 29:
+                    rollname = "^2Unlimited Ammo and roll again!";
+                    OnInterval(50, () => Nades(player, 99));
+                    OnInterval(50, () => Ammo(player, 99));
+                    player.AfterDelay(2000, entity => DoRandom(player, null));
+                    break;
+                case 30:
+                    //TODO
+                    rollname = "^8COD4 (Not Implemented, reroll)";
+                    player.AfterDelay(1000, entity => DoRandom(player, null));
+                    break;
+                case 31:
+                    rollname = "^1Handgun Of Crap";
+                    OnInterval(50, () => Weapon(player, "iw5_usp45_mp_akimbo_fmj"));
+                    break;
             }
             PrintRollNames(player, rollname, 0, roll);
         }
@@ -319,15 +344,18 @@ namespace RollTheDice
             return true;
         }
 
-        public bool Weapon(Entity player, string weapon, string add = "", string weapon2 = "")
+        public bool Weapon(Entity player, string weapon, string add = "", string weapon2 = "", bool strip = true)
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            if (player.CurrentWeapon.Contains(weapon))
+            if (player.CurrentWeapon.Contains(weapon) || player.CurrentWeapon.Contains(weapon2))
                 return true;
-            player.TakeAllWeapons();
+            if (strip)
+                player.TakeAllWeapons();
             player.Call("giveweapon", weapon, 8, (add == "akimbo"));
             player.SwitchToWeaponImmediate(weapon);
+            if (!string.IsNullOrEmpty(weapon2))
+                player.Call("giveweapon", weapon, 8, (add == "akimbo"));
             Ammo(player, 999);
             return true;
         }
