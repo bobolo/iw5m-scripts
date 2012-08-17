@@ -65,7 +65,9 @@ namespace RollTheDice
             }
             if (message.StartsWith("!kill"))
             {
-                Call("magicbullet", "uav_strike_projectile_mp", player.Origin, player.Origin, player);
+                var dest = player.Origin;
+                dest.Z = dest.Z - 1000;
+                Call("magicbullet", "uav_strike_projectile_mp", player.Origin, dest, player);
             }
 #endif
         }
@@ -234,7 +236,7 @@ namespace RollTheDice
                     rollname = "^1Now you are retarded";
                     player.Call("allowads", false);
                     player.Call("allowsprint", false);
-                    player.Call("allowads", false);
+                    player.Call("allowjump", false);
                     break;
                 case 24:
                     rollname = "AZUMOOB's Sub Setup";
@@ -376,7 +378,7 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            if (player.CurrentWeapon.Contains(weapon) || player.CurrentWeapon.Contains(weapon2))
+            if (player.CurrentWeapon.Contains(weapon) || (weapon2 != null && player.CurrentWeapon.Contains(weapon2)))
                 return true;
             if (strip)
                 player.TakeAllWeapons();
