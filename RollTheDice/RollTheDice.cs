@@ -162,7 +162,7 @@ namespace RollTheDice
                     rollname = "^2Barrett Roll";
                     OnInterval(100, () => Recoil(player, 0f));
                     OnInterval(100, () => Stock(player, 99));
-                    OnInterval(100, () => Weapon(player, "iw5_barrett_mp_eotech_xmags", "", null));
+                    OnInterval(100, () => Weapon(player, "iw5_barrett_mp_xmags", "", null));
                     break;
                 case 12:
                     rollname = "^1Negative";
@@ -188,7 +188,7 @@ namespace RollTheDice
                     rollname = "^1Supermodel 1887";
                     player.Call(33395);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_1887_mp_akimbo", "akimbo", null));
+                    OnInterval(100, () => Weapon(player, "iw5_1887_mp", "akimbo", null));
                     break;
                 case 16:
                     rollname = "^1Fallout";
@@ -203,7 +203,7 @@ namespace RollTheDice
                     rollname = "^2Wallhack for 40 seconds";
                     player.Call("thermalvisionfofoverlayon");
                     player.AfterDelay(40000, entity =>
-                                                 {
+                                                  {
                                                      player.Call("thermalvisionfofoverlayoff");
                                                      player.Call("iprintlnbold", "Wallhack Off");
                                                  });
@@ -273,7 +273,7 @@ namespace RollTheDice
                     player.AfterDelay(1000, entity => DoRandom(player, null));
                     break;*/
                 case 27:
-                    //TODO: Doesn't work
+                    //TODO: No akimbo, semtex not given
                     rollname = "Morpheus";
                     player.Call(33395);
                     player.SetPerk("specialty_longersprint", true, true);
@@ -288,7 +288,7 @@ namespace RollTheDice
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
                 case 29:
-                    //TODO: Doesn't work
+                    //TODO: Doesn't switch, doesn't have the deagle
                     rollname = "COD4";
                     player.SetPerk("specialty_bulletdamage", true, true);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
@@ -298,7 +298,7 @@ namespace RollTheDice
                 case 30:
                     //TODO: Doesn't work
                     rollname = "^1Handgun Of Crap";
-                    OnInterval(100, () => Weapon(player, "iw5_usp45_mp_akimbo_fmj"));
+                    OnInterval(100, () => Weapon(player, "iw5_usp45_mp_fmj", "akimbo"));
                     break;
                 case 31:
                     rollname = "^1Extra Speed and roll again!";
@@ -308,6 +308,7 @@ namespace RollTheDice
                 case 32:
                     //TODO: Doesn't work
                     rollname = "^2Walking AC130 25MM";
+                    OnInterval(100, () => Ammo(player, 99));
                     OnInterval(100, () => Weapon(player, "ac130_25mm_mp"));
                     break;
                 case 33:
@@ -393,10 +394,14 @@ namespace RollTheDice
                 return true;
             if (strip)
                 player.TakeAllWeapons();
-            player.Call("giveweapon", weapon, 8, (add == "akimbo"));
+            if (add == "akimbo")
+            {
+                weapon = weapon + "_akimbo";
+            }
+            player.GiveWeapon(weapon);
             player.SwitchToWeaponImmediate(weapon);
             if (!string.IsNullOrEmpty(weapon2))
-                player.Call("giveweapon", weapon, 8, (add == "akimbo"));
+                player.GiveWeapon(weapon2);
             Ammo(player, 999);
             return true;
         }
