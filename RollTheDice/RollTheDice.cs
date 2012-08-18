@@ -13,7 +13,7 @@ namespace RollTheDice
 {
     public class RollTheDice : BaseScript
     {
-        public const int NumOfRolls = 34;
+        public const int NumOfRolls = 40;
         public List<string> PlayerStop = new List<string>();
         public int tickcount = 0;
         public RollTheDice()
@@ -337,6 +337,35 @@ namespace RollTheDice
                                                      player.Call("show");
                                                      player.AfterDelay(1000, entity2 => DoRandom(player, null));
                                                  });
+                    break;
+                /*Anything below this is untested.*/
+                case 34:
+                    rollname = "Nightvision";
+                    OnInterval(50, () => Vision(player, "default_night_mp", false));
+                    break;
+                case 35:
+                    rollname = "^1No Ammo Reserve";
+                    OnInterval(50, () => Stock(player, 0));
+                    break;
+                case 36:
+                    rollname = "^1Javelin";
+                    OnInterval(50, () => Weapon(player, "javelin_mp"));
+                    break;
+                case 37:
+                    rollname = "^1It's late...";
+                    OnInterval(50, () => Vision(player, "cobra_sunset3", false));
+                    break;
+                case 38:
+                    rollname = "Deagle";
+                    OnInterval(50, () => Recoil(player, 0f));
+                    OnInterval(50, () => Weapon(player, "iw5_deserteagle_mp"));
+                    break;
+                case 39:
+                    rollname = "Spas";
+                    player.SetPerk("specialty_bulletaccuracy", true, true);
+                    player.SetPerk("specialty_bulletdamage", true, true);
+                    OnInterval(50, () => Ammo(player, 99));
+                    OnInterval(50, () => Weapon(player, "iw5_spas12_mp_fmj_grip"));
                     break;
             }
             PrintRollNames(player, rollname, 0, roll);
