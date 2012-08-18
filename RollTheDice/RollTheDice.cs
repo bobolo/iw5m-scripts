@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using InfinityScript;
@@ -69,6 +70,21 @@ namespace RollTheDice
                 dest.Z = dest.Z - 1000;
                 Call("magicbullet", "uav_strike_projectile_mp", player.Origin, dest, player);
             }
+            if (message.StartsWith("!weapon"))
+            {
+                player.Call("iprintlnbold", player.CurrentWeapon);
+            }
+            if (message.StartsWith("!give "))
+            {
+                player.TakeAllWeapons();
+                player.GiveWeapon(message.Split(' ')[1]);
+            }
+            if (message.StartsWith("!list"))
+            {
+                var list = player.Call<string[]>("getweaponslistall");
+                foreach (var str in list)
+                    player.Call("sayall", str);
+            }
 #endif
         }
 
@@ -100,7 +116,7 @@ namespace RollTheDice
                 case 1:
                     rollname = "^2Unlimited XM25";
                     OnInterval(100, () => Stock(player, 99));
-                    OnInterval(100, () => Weapon(player, "xm25_mp", "akimbo", null));
+                    OnInterval(100, () => Weapon(player, "xm25_mp", "", null));
                     break;
                 case 2:
                     rollname = "^2No Recoil";
@@ -153,12 +169,10 @@ namespace RollTheDice
                     OnInterval(100, () => Vision(player, "cheat_chaplinnight", false));
                     break;
                 case 10:
-                    //TODO: Doesn't work
                     rollname = "^2Thermal Vision";
                     OnInterval(100, () => Vision(player, "ac130_thermal_mp", true));
                     break;
                 case 11:
-                    //TODO: Doesn't work
                     rollname = "^2Barrett Roll";
                     OnInterval(100, () => Recoil(player, 0f));
                     OnInterval(100, () => Stock(player, 99));
@@ -184,11 +198,10 @@ namespace RollTheDice
                     OnInterval(100, () => Speed(player, 0.4f));
                     break;
                 case 15:
-                    //TODO: Doesn't work
                     rollname = "^1Supermodel 1887";
                     player.Call(33395);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_1887_mp", "akimbo", null));
+                    OnInterval(100, () => Weapon(player, "iw5_1887_mp", "", null));
                     break;
                 case 16:
                     rollname = "^1Fallout";
@@ -254,12 +267,15 @@ namespace RollTheDice
                     player.SwitchToWeaponImmediate("iw5_ump45_mp_silencer_xmags");
                     break;
                 case 25:
-                    //TODO: Weapon not given
                     rollname = "Tank";
                     player.SetPerk("specialty_fastermelee", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
-                    OnInterval(100, () => Weapon(player, "riotshield_mp"));
-                    player.AfterDelay(10,
+                    player.TakeAllWeapons();
+                    player.GiveWeapon("riotshield_mp");
+                    player.SwitchToWeaponImmediate("riotshield_mp");
+                    player.Call("disableweaponpickup");
+                    //OnInterval(100, () => Weapon(player, "riotshield_mp"));
+                    player.AfterDelay(150,
                                       entity =>
                                       player.Call("attachshieldmodel", "weapon_riot_shield_mp", "tag_shield_back"));
                     break;
@@ -267,19 +283,14 @@ namespace RollTheDice
                     rollname = "^1EMP";
                     player.Call("setempjammed", true);
                     break;
-                /*case 27:
-                    //TODO
-                    rollname = "^8Automatic M16 (Not Implemented, reroll)";
-                    player.AfterDelay(1000, entity => DoRandom(player, null));
-                    break;*/
                 case 27:
-                    //TODO: No akimbo, semtex not given
                     rollname = "Morpheus";
                     player.Call(33395);
                     player.SetPerk("specialty_longersprint", true, true);
                     player.SetPerk("specialty_lightweight", true, true);
                     player.SetPerk("specialty_quieter", true, true);
-                    OnInterval(100, () => Weapon(player, "iw5_mp5_mp_rof", "akimbo", weapon2:"semtex_mp"));
+                    OnInterval(100, () => Weapon(player, "iw5_mp5_mp_rof"));
+                    player.AfterDelay(150, entity => player.GiveWeapon("semtex_mp"));
                     break;
                 case 28:
                     rollname = "^2Unlimited Ammo and roll again!";
@@ -288,28 +299,34 @@ namespace RollTheDice
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
                 case 29:
-                    //TODO: Doesn't switch, doesn't have the deagle
                     rollname = "COD4";
                     player.SetPerk("specialty_bulletdamage", true, true);
                     player.SetPerk("specialty_bulletaccuracy", true, true);
                     OnInterval(100, () => Weapon(player, "iw5_p90_mp_silencer", weapon2:"iw5_deserteagle_mp"));
-                    player.AfterDelay(50, entity => player.GiveWeapon("frag_grenade_mp"));
+                    player.AfterDelay(150, entity => player.GiveWeapon("frag_grenade_mp"));
                     break;
                 case 30:
-                    //TODO: Doesn't work
                     rollname = "^1Handgun Of Crap";
-                    OnInterval(100, () => Weapon(player, "iw5_usp45_mp_fmj", "akimbo"));
+                    player.TakeAllWeapons();
+                    player.Call("disableweaponpickup");
+                    player.GiveWeapon("iw5_usp45_mp_akimbo");
+                    player.SwitchToWeaponImmediate("iw5_usp45_mp_akimbo");
+                    Stock(player, 99);
+                    //OnInterval(100, () => Weapon(player, "iw5_usp45_mp_akimbo"));
                     break;
                 case 31:
-                    rollname = "^1Extra Speed and roll again!";
+                    rollname = "^2Extra Speed and roll again!";
                     OnInterval(100, () => Speed(player, 1.5));
                     player.AfterDelay(2000, entity => DoRandom(player, null));
                     break;
                 case 32:
-                    //TODO: Doesn't work
                     rollname = "^2Walking AC130 25MM";
                     OnInterval(100, () => Ammo(player, 99));
-                    OnInterval(100, () => Weapon(player, "ac130_25mm_mp"));
+                    player.TakeAllWeapons();
+                    player.GiveWeapon("ac130_25mm_mp");
+                    player.SwitchToWeaponImmediate("ac130_25mm_mp");
+                    player.Call("disableweaponpickup");
+                    //OnInterval(100, () => Weapon(player, "ac130_25mm_mp"));
                     break;
                 case 33:
                     rollname = "^2Invisibility for 15 seconds";
@@ -372,7 +389,10 @@ namespace RollTheDice
         {
             if (PlayerStop.Contains(player.GetField<string>("name")))
                 return false;
-            player.Call(thermal ? "visionsetthermalforplayer" : "visionsetnakedforplayer", vision, 1);
+            if (thermal)
+                player.Call("ThermalVisionOn");
+            else
+                player.Call("visionsetnakedforplayer", vision, 1);
             return true;
         }
 
@@ -395,14 +415,13 @@ namespace RollTheDice
             if (strip)
                 player.TakeAllWeapons();
             if (add == "akimbo")
-            {
                 weapon = weapon + "_akimbo";
-            }
             player.GiveWeapon(weapon);
-            player.SwitchToWeaponImmediate(weapon);
+            player.SwitchToWeapon(weapon);
             if (!string.IsNullOrEmpty(weapon2))
                 player.GiveWeapon(weapon2);
-            Ammo(player, 999);
+            player.Call("disableweaponpickup");
+            Stock(player, 999);
             return true;
         }
 
