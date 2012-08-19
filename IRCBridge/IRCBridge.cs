@@ -204,18 +204,62 @@ namespace IRCBridge
 
         public override void OnSay(Entity player, string name, string message)
         {
-            SendMessage(name + NORMAL + ": " + message);
+            var teamcolour = "";
+            switch (player.GetField<string>("sessionteam"))
+            {
+                case "axis":
+                    teamcolour = "04";
+                    break;
+                case "allies":
+                    teamcolour = "02";
+                    break;
+            }
+            SendMessage(COLOUR + teamcolour + name + NORMAL + ": " + message);
         }
 
         public override void OnPlayerKilled(Entity player, Entity inflictor, Entity attacker, int damage, string mod, string weapon, Vector3 dir, string hitLoc)
         {
             if (mod == "MOD_SUICIDE" || mod == "MOD_TRIGGER_HURT" || mod == "MOD_FALLING")
-                SendMessage(string.Format("{0}({1}) suicided.", player.GetField<string>("name"),
-                                          player.GetField<string>("sessionteam")));
+            {
+                var colour = "";
+                switch (player.GetField<string>("sessionteam"))
+                {
+                    case "axis":
+                        colour = "04";
+                        break;
+                    case "allies":
+                        colour = "02";
+                        break;
+                }
+                SendMessage(string.Format("{1}{0}{2} suicided.", player.GetField<string>("name"),
+                                COLOUR + colour, NORMAL));
+            }
             else
-                SendMessage(string.Format("{0}({3}) was killed by {1}({4}) with {2}.", player.GetField<string>("name"),
-                                          attacker.GetField<string>("name"), weapon, player.GetField<string>("sessionteam"),
-                                          attacker.GetField<string>("sessionteam")));
+            {
+                var playercolour = "";
+                switch (player.GetField<string>("sessionteam"))
+                {
+                    case "axis":
+                        playercolour = "04";
+                        break;
+                    case "allies":
+                        playercolour = "02";
+                        break;
+                }
+                var attackercolour = "";
+                switch (attacker.GetField<string>("sessionteam"))
+                {
+                    case "axis":
+                        attackercolour = "04";
+                        break;
+                    case "allies":
+                        attackercolour = "02";
+                        break;
+                }
+                SendMessage(string.Format("{3}{0}{5} was killed by {4}{1}{5} with {2}.", player.GetField<string>("name"),
+                                          attacker.GetField<string>("name"), weapon, COLOUR + playercolour,
+                                          COLOUR + attackercolour, NORMAL));
+            }
         }
 
 
