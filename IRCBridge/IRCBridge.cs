@@ -17,6 +17,7 @@ namespace IRCBridge
         public string channel;
         public string nick;
         public string password;
+        public string serverpassword;
         public bool sendstartmsg;
         public bool destroy;
         public bool sendingscores;
@@ -43,13 +44,14 @@ namespace IRCBridge
             try
             {
                 var settings = File.ReadAllLines("scripts\\ircbridge\\settings.txt");
-                if (settings.Length < 5)
+                if (settings.Length < 6)
                     throw new Exception();
                 server = settings[0];
                 port = int.Parse(settings[1]);
                 channel = settings[2];
                 nick = settings[3];
                 password = settings[4];
+                serverpassword = settings[5];
             }
             catch (Exception e)
             {
@@ -280,6 +282,7 @@ namespace IRCBridge
             {
                 Log.Info("Attempting to connect...");
                 irc.Connect(server, port);
+                irc.RfcPass(serverpassword);
                 irc.ListenOnce(false);
                 Log.Info("Logging in.");
                 irc.Login(nick, "IW5M IRCBridge Bot");
