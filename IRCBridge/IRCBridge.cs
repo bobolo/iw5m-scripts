@@ -204,7 +204,7 @@ namespace IRCBridge
 
         public override void OnSay(Entity player, string name, string message)
         {
-            var teamcolour = "";
+            var teamcolour = NORMAL;
             switch (player.GetField<string>("sessionteam"))
             {
                 case "axis":
@@ -221,7 +221,7 @@ namespace IRCBridge
         {
             if (mod == "MOD_SUICIDE" || mod == "MOD_TRIGGER_HURT" || mod == "MOD_FALLING")
             {
-                var colour = "";
+                var colour = NORMAL;
                 switch (player.GetField<string>("sessionteam"))
                 {
                     case "axis":
@@ -236,7 +236,7 @@ namespace IRCBridge
             }
             else
             {
-                var playercolour = "";
+                var playercolour = NORMAL;
                 switch (player.GetField<string>("sessionteam"))
                 {
                     case "axis":
@@ -246,7 +246,7 @@ namespace IRCBridge
                         playercolour = "02";
                         break;
                 }
-                var attackercolour = "";
+                var attackercolour = NORMAL;
                 switch (attacker.GetField<string>("sessionteam"))
                 {
                     case "axis":
