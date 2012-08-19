@@ -12,6 +12,7 @@ namespace iSnipe
     {
         public Settings Settings;
         public List<string> PlayerStop = new List<string>();
+        public Dictionary<string, int> PlayerADSCount = new Dictionary<string, int>();  
         public iSnipe()
         {
             try
@@ -30,11 +31,8 @@ namespace iSnipe
                                        entity.SpawnedPlayer += () => OnPlayerSpawn(entity);
                                    };
 
-            if (!Settings.EnableFallDamage)
-            {
-                Call("setdvar", "bg_fallDamageMinHeight", 9998);
-                Call("setdvar", "bg_fallDamageMaxHeight", 9999);
-            }
+            PlayerDisconnected += entity => PlayerStop.Add(entity.GetField<string>("name"));
+
             if (!Settings.DamageDirectionIndicator)
                 Call("setdvar", "cg_drawdamagedirection", 0);
             if (!Settings.ShowEnemyNames)
@@ -53,12 +51,13 @@ namespace iSnipe
             Call(42, "lowAmmoWarningNoReloadColor1", 0, 0, 0, 0);
             Call(42, "perk_weapSpreadMultiplier", 0.45f);
             Call(42, "cg_drawbreathhint", 0);
+            Call(42, "scr_player_maxhealth", Settings.PlayerMaxHealth);
         }
 
         public void OnPlayerSpawn(Entity entity)
         {
-            entity.SetField("maxhealth", Settings.PlayerMaxHealth);
-            entity.Health = Settings.PlayerMaxHealth;
+            if (PlayerStop.Contains(entity.GetField<string>("name")))
+                PlayerStop.Remove(entity.GetField<string>("name"));
             entity.TakeAllWeapons();
             entity.GiveWeapon(Settings.MainWeapon);
             entity.AfterDelay(10, entity1 =>
@@ -68,11 +67,33 @@ namespace iSnipe
                                       });
             if (Settings.AntiHardscope)
             {
-                //entity.OnInterval(50, entity1 => );
+                entity.OnInterval(50, entity1 =>
+                                          {
+                                              if (PlayerStop.Contains(entity.GetField<string>("name")))
+                                                  return false;
+                                              if (!PlayerADSCount.ContainsKey(entity.GetField<string>("name")))
+                                                  PlayerADSCount.Add(entity.GetField<string>("name"), 0);
+                                              if (entity.Call<float>("playerads") >= 1)
+                                                  PlayerADSCount[entity.GetField<string>("name")]++;
+                                              if (PlayerADSCount[entity.GetField<string>("name")] >= Settings.MaxScopeTime/0.15)
+                                              {
+                                                  PlayerADSCount[entity.GetField<string>("name")] = 0;
+                                                  entity.Call("allowads", false);
+                                                  OnInterval(50, () =>
+                                                                     {
+                                                                         if (entity.Call<float>("playerads") > 0)
+                                                                             return true;
+                                                                         entity.Call("allowads", true);
+                                                                         return false;
+                                                                     });
+                                              }
+                                              return true;
+                                          });
             }
             if (Settings.ThrowingKnife)
             {
                 entity.Call("SetOffhandPrimaryClass", "throwingknife");
+                entity.GiveWeapon("throwingknife_mp");
                 entity.Call("setweaponammoclip", "throwingknife_mp", 1);
             }
             if (Settings.RemoveAllPerks)
@@ -91,6 +112,8 @@ namespace iSnipe
                 entity.SetPerk("specialty_quickswap", true, false);
                 entity.SetPerk("specialty_fastmantle", true, false);
             }
+            if (!Settings.EnableFallDamage)
+                entity.SetPerk("specialty_falldamage", true, false);
             if (Settings.UseSecondary)
             {
                 entity.GiveWeapon(Settings.SecondaryWeapon);
