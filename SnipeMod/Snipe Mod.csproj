@@ -50,7 +50,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="iSnipe.cs" />
+    <Compile Include="SnipeMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
@@ -84,7 +84,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "F:\Program Files (x86)\Steam\steamapps\common\call of duty modern warfare 3 - Copy\scripts\iSnipe.auto.dll"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "F:\Program Files (x86)\Steam\steamapps\common\call of duty modern warfare 3 - Copy\scripts\SnipeMod.auto.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

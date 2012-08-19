@@ -6,14 +6,14 @@ using System.Xml;
 using InfinityScript;
 using System.Xml.Serialization;
 
-namespace iSnipe
+namespace SnipeMod
 {
-    public class iSnipe : BaseScript
+    public class SnipeMod : BaseScript
     {
         public Settings Settings;
         public List<string> PlayerStop = new List<string>();
         public Dictionary<string, int> PlayerADSCount = new Dictionary<string, int>();  
-        public iSnipe()
+        public SnipeMod()
         {
             try
             {
@@ -133,28 +133,28 @@ namespace iSnipe
 
         public void LoadSettings()
         {
-            if (!File.Exists(@"scripts\isnipe\settings.xml"))
+            if (!File.Exists(@"scripts\SnipeMod\settings.xml"))
             {
                 SaveSettings();
                 return;
             }
             Settings = new Settings();
-            using (var stream = new FileStream(@"scripts\isnipe\settings.xml", FileMode.Open))
+            using (var stream = new FileStream(@"scripts\SnipeMod\settings.xml", FileMode.Open))
                 Settings = (Settings) (new XmlSerializer(Settings.GetType()).Deserialize(stream));
         }
 
         public void SaveSettings()
         {
             Settings = new Settings();
-            Directory.CreateDirectory(@"scripts\isnipe");
+            Directory.CreateDirectory(@"scripts\SnipeMod");
             using (var stream = new MemoryStream())
             {
                 using (var writer = XmlWriter.Create(stream))
                 {
                     new XmlSerializer(Settings.GetType()).Serialize(writer, Settings);
                     var xml = Encoding.UTF8.GetString(stream.ToArray());
-                    File.WriteAllText(@"scripts\isnipe\settings.xml", xml);
-                    Log.Info(@"Saved settings to scripts\isnipe\settings.xml");
+                    File.WriteAllText(@"scripts\SnipeMod\settings.xml", xml);
+                    Log.Info(@"Saved settings to scripts\SnipeMod\settings.xml");
                 }
             }
         }

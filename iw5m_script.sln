@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollTheDice", "RollTheDice\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpshooter_Infected", "Sharpshooter_Infected\Sharpshooter_Infected.csproj", "{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iSnipe", "iSnipe\iSnipe.csproj", "{ADF21510-976D-4C07-AC48-39AD3D0EB7AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snipe Mod", "iSnipe\Snipe Mod.csproj", "{ADF21510-976D-4C07-AC48-39AD3D0EB7AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

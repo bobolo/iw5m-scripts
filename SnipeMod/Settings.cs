@@ -1,4 +1,4 @@
-﻿namespace iSnipe
+﻿namespace SnipeMod
 {
     public class Settings
     {
