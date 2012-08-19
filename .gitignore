@@ -9,3 +9,6 @@ _Resharper*
 #user files
 *.suo
 *.user
+
+#reference scripts
+iw4m_scripts
