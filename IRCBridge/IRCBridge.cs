@@ -282,10 +282,9 @@ namespace IRCBridge
             {
                 Log.Info("Attempting to connect...");
                 irc.Connect(server, port);
-                irc.RfcPass(serverpassword);
                 irc.ListenOnce(false);
                 Log.Info("Logging in.");
-                irc.Login(nick, "IW5M IRCBridge Bot");
+                irc.Login(nick, "IW5M IRCBridge Bot", 0, nick, serverpassword);
                 irc.ListenOnce(false);
                 Log.Info("Joining channel.");
                 irc.RfcJoin(channel);
