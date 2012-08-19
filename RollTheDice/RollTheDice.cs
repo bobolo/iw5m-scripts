@@ -349,7 +349,8 @@ namespace RollTheDice
                     break;
                 case 36:
                     rollname = "^1Javelin";
-                    OnInterval(50, () => Weapon(player, "javelin_mp"));
+                    GiveWeapon(player, "javelin_mp");
+                    //OnInterval(50, () => Weapon(player, "javelin_mp"));
                     break;
                 case 37:
                     rollname = "^1It's late...";
@@ -358,14 +359,16 @@ namespace RollTheDice
                 case 38:
                     rollname = "Deagle";
                     OnInterval(50, () => Recoil(player, 0f));
-                    OnInterval(50, () => Weapon(player, "iw5_deserteagle_mp"));
+                    GiveWeapon(player, "iw5_deserteagle_mp");
+                    //OnInterval(50, () => Weapon(player, "iw5_deserteagle_mp"));
                     break;
                 case 39:
                     rollname = "Spas";
                     player.SetPerk("specialty_bulletaccuracy", true, true);
                     player.SetPerk("specialty_bulletdamage", true, true);
                     OnInterval(50, () => Ammo(player, 99));
-                    OnInterval(50, () => Weapon(player, "iw5_spas12_mp_fmj_grip"));
+                    GiveWeapon(player, "iw5_deserteagle_mp");
+                    //OnInterval(50, () => Weapon(player, "iw5_spas12_mp_fmj_grip"));
                     break;
             }
             PrintRollNames(player, rollname, 0, roll);
@@ -452,6 +455,16 @@ namespace RollTheDice
             player.Call("disableweaponpickup");
             Stock(player, 999);
             return true;
+        }
+
+        public void GiveWeapon(Entity player, params string[] weapons)
+        {
+            player.TakeAllWeapons();
+            foreach (var weapon in weapons)
+                player.GiveWeapon(weapon);
+            player.SwitchToWeaponImmediate(weapons[0]);
+            player.Call("disableweaponpickup");
+            Stock(player, 99);
         }
 
         public bool Recoil(Entity player, float scale)
