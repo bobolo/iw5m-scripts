@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfinityScript", "src\Infin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollTheDice", "RollTheDice\RollTheDice.csproj", "{69D77D2E-EF77-47EB-A995-10BC85DC749E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpshooter_Infected", "Sharpshooter_Infected\Sharpshooter_Infected.csproj", "{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69D77D2E-EF77-47EB-A995-10BC85DC749E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FA729E-8A3C-44F6-AD09-8715AB00E1AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
