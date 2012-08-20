@@ -12,7 +12,8 @@ namespace SnipeMod
     {
         public Settings Settings;
         public List<string> PlayerStop = new List<string>();
-        public Dictionary<string, int> PlayerADSCount = new Dictionary<string, int>();  
+        public Dictionary<string, int> PlayerADSCount = new Dictionary<string, int>();
+        private NoKnife nf = new NoKnife();
         public SnipeMod()
         {
             try
@@ -43,6 +44,8 @@ namespace SnipeMod
                 Call("setdvar", "scr_game_hardpoints", 0);
             if (!Settings.EnableKillcam)
                 Call("setdvar", "scr_game_allowkillcam", 0);
+            if (Settings.AntiMelee)
+                nf.DisableKnife();
             Call(42, "lowAmmoWarningNoAmmoColor1", 0, 0, 0, 0);
             Call(42, "lowAmmoWarningNoAmmoColor2", 0, 0, 0, 0);
             Call(42, "lowAmmoWarningColor1", 0, 0, 0, 0);
@@ -52,6 +55,11 @@ namespace SnipeMod
             Call(42, "perk_weapSpreadMultiplier", 0.45f);
             Call(42, "cg_drawbreathhint", 0);
             Call(42, "scr_player_maxhealth", Settings.PlayerMaxHealth);
+        }
+
+        ~SnipeMod()
+        {
+            nf.EnableKnife();
         }
 
         public void OnPlayerSpawn(Entity entity)
@@ -75,7 +83,8 @@ namespace SnipeMod
                                                   PlayerADSCount.Add(entity.GetField<string>("name"), 0);
                                               if (entity.Call<float>("playerads") >= 1)
                                                   PlayerADSCount[entity.GetField<string>("name")]++;
-                                              if (PlayerADSCount[entity.GetField<string>("name")] >= Settings.MaxScopeTime/0.15)
+                                              if (PlayerADSCount[entity.GetField<string>("name")] >=
+                                                  Settings.MaxScopeTime/0.15)
                                               {
                                                   PlayerADSCount[entity.GetField<string>("name")] = 0;
                                                   entity.Call("allowads", false);

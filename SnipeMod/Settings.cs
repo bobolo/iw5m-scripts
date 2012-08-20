@@ -3,6 +3,7 @@
     public class Settings
     {
         public bool AntiHardscope = true;
+        public bool AntiMelee = true;
         public double MaxScopeTime = 0.15;
         public bool DamageDirectionIndicator = true;
         public bool ShowEnemyNames = false;
