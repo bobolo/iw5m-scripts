@@ -30,6 +30,14 @@ namespace SnipeMod
             PlayerConnected += entity =>
                                    {
                                        entity.SpawnedPlayer += () => OnPlayerSpawn(entity);
+                                       /*entity.OnInterval(2000, entity1 =>
+                                                                   {
+                                                                       entity.Call("iprintlnbold",
+                                                                                   "Health: " + entity.Health.ToString() + " Maxhealth: " + entity.GetField<int>("maxhealth").ToString());
+                                                                       return true;
+                                                                   });*/
+                                       Call("setdynamicdvar", "scr_player_maxhealth", Settings.PlayerMaxHealth);
+                                       entity.SetField("maxhealth", Settings.PlayerMaxHealth);
                                    };
 
             PlayerDisconnected += entity => PlayerStop.Add(entity.GetField<string>("name"));
@@ -54,12 +62,33 @@ namespace SnipeMod
             Call(42, "lowAmmoWarningNoReloadColor1", 0, 0, 0, 0);
             Call(42, "perk_weapSpreadMultiplier", 0.45f);
             Call(42, "cg_drawbreathhint", 0);
-            Call(42, "scr_player_maxhealth", Settings.PlayerMaxHealth);
+            /*OnInterval(50, () =>
+                               {
+                                   Call("setdvar", "scr_player_maxhealth", (float)Settings.PlayerMaxHealth);
+                                   Call("setdynamicdvar", "scr_player_maxhealth", new Parameter((float) Settings.PlayerMaxHealth));
+                                   Call("setdynamicdvar", "scr_player_maxhealth", (float)Settings.PlayerMaxHealth);
+                                   return true;
+                               });*/
+            Tick += () =>
+                        {
+                            foreach (var entity in Players)
+                            {
+                                entity.SetField("maxhealth", Settings.PlayerMaxHealth);
+                                if (entity.IsAlive)
+                                {
+                                    entity.Call("stoplocalsound", "breathing_hurt");
+                                }
+                            }
+                        };
         }
 
         ~SnipeMod()
         {
             nf.EnableKnife();
+        }
+
+        public override void OnSay(Entity player, string name, string message)
+        {
         }
 
         public void OnPlayerSpawn(Entity entity)
@@ -72,7 +101,7 @@ namespace SnipeMod
                                       {
                                           entity.SwitchToWeapon(Settings.MainWeapon);
                                           entity.Call("givemaxammo", Settings.MainWeapon);
-                                      });
+                                      });            
             if (Settings.AntiHardscope)
             {
                 entity.OnInterval(50, entity1 =>
@@ -132,6 +161,15 @@ namespace SnipeMod
                     entity.Call("setweaponammostock", Settings.SecondaryWeapon, 0);
                 }
             }
+            //entity.SetField("maxhealth", Settings.PlayerMaxHealth);
+            //entity.Health = Settings.PlayerMaxHealth;
+            //entity.Notify("joined_spectators");
+            //entity.SetField("usingRemote", "remote_remote");
+            OnInterval(10, () =>
+                               {
+                                   entity.Call("stoplocalsound", "breathing_hurt");
+                                   return true;
+                               });
             OnInterval(50, () =>
                                {
                                    if (entity.CurrentWeapon != Settings.MainWeapon)
