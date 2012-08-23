@@ -140,7 +140,14 @@ namespace IRCBridge
                     BuildScores();
                     break;
                 default:
-                    Call("sayall", string.Format("^8[IRC] {0} ^7: {1}", ircEventArgs.Data.Nick, ircEventArgs.Data.Message));
+                    foreach (var player in Players)
+                    {
+                        var name = player.GetField<string>("name");
+                        player.SetField("name", "^8[IRC] " + ircEventArgs.Data.Nick);
+                        player.Call("sayall", ircEventArgs.Data.Message);
+                        player.SetField("name", name);
+                        break;
+                    }
                     break;
             }
         }
